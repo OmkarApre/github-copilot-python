@@ -1,18 +1,39 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sudoku Game</title>
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-  <h1>Sudoku Game</h1>
-  <div id="sudoku-board"></div>
-  <div class="controls">
-    <button id="new-game">New Game</button>
-    <button id="check-solution">Check Solution</button>
-    <span id="message"></span>
-  </div>
+  <main class="app-shell">
+    <h1>Sudoku Game</h1>
+    <div class="controls">
+      <label class="control-group" for="difficulty-select">
+        <span>Difficulty</span>
+        <select id="difficulty-select">
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </label>
+      <button id="new-game" type="button">New Game</button>
+      <button id="check-solution" type="button">Check Solution</button>
+      <button id="hint-button" type="button">Hint</button>
+      <button id="theme-toggle" type="button">Dark Mode</button>
+    </div>
+    <div class="stats">
+      <span id="timer">Time: 00:00</span>
+      <span id="hints-used">Hints: 0</span>
+    </div>
+    <div id="sudoku-board" class="sudoku-board" aria-label="Sudoku board"></div>
+    <div id="message" class="message" role="status" aria-live="polite"></div>
+    <section class="leaderboard">
+      <h2>Top 10 Scores</h2>
+      <ol id="leaderboard-list"></ol>
+    </section>
+  </main>
   <script src="/static/main.js"></script>
 </body>
 </html>

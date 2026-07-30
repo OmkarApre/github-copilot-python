@@ -1,0 +1,46 @@
+{
+  "project": "Sudoku Flask Refactor",
+  "prompts": [
+    {
+      "milestone": "Testing framework setup",
+      "prompt": "I'm working on a Flask Sudoku app (app.py, sudoku_logic.py) in the starter folder. Before I refactor anything, please set up a pytest testing framework for this project. Create a tests folder with an initial test file that verifies the app starts correctly and the core Sudoku logic functions (like board generation and validation) work as expected. Also add pytest to requirements.txt and tell me the exact command to run the tests."
+    },
+    {
+      "milestone": "Fixing invalid puzzle generation bug",
+      "prompt": "The test test_generate_puzzle_creates_valid_board in tests/test_app.py is failing because _is_valid_puzzle(puzzle) returns False. This means sudoku_logic.generate_puzzle(35) is producing a board with a duplicate number in some row, column, or 3x3 square. Please look at sudoku_logic.py, find the bug in the puzzle generation logic, and fix it so the generated puzzle is always valid. Keep the function signature the same."
+    },
+    {
+      "milestone": "Async and error handling refactor",
+      "prompt": "Refactor the Flask routes in app.py to use async and await where applicable (Flask 2.0+ supports async views). Also add try/except error handling to every route, returning a clear JSON error message and appropriate HTTP status code (like 400 or 500) if something fails, instead of crashing. Keep all existing functionality and route names the same."
+    },
+    {
+      "milestone": "Unique-solution puzzle validation",
+      "prompt": "Review the generate_puzzle function in sudoku_logic.py. Make sure it guarantees the generated puzzle has exactly one unique solution - add a solution-counting check (e.g. a solver that counts solutions and stops early if it finds more than one) and regenerate/remove cells differently if a puzzle has multiple solutions. Also add a pytest test in tests/test_app.py that verifies generate_puzzle always returns a puzzle with a unique solution."
+    },
+    {
+      "milestone": "Difficulty selector",
+      "prompt": "Add a difficulty selector (Easy, Medium, Hard) to the Sudoku app. Easy should prefill more cells (e.g. ~45), Medium fewer (~35), Hard fewest (~25). Wire this into generate_puzzle so the difficulty choice controls how many cells stay filled. Update the frontend (index.html and main.js) to show a dropdown or buttons for difficulty, and trigger a new puzzle generation with that difficulty when the user selects it or clicks New Game."
+    },
+    {
+      "milestone": "Check and Hint buttons",
+      "prompt": "Add a Check button that compares the current board state to the solution and highlights any incorrect entries (e.g. red background) using event delegation on the board container, not individual cell listeners. Also add a Hint button that fills in one correct empty cell from the solution, locks it so it can't be edited, and gives it a distinct background color to show it was a hint."
+    },
+    {
+      "milestone": "Fixing Check button flagging empty cells",
+      "prompt": "There are two bugs. First: the Check Solution button is highlighting ALL empty cells as incorrect (pink), when it should only highlight cells the user has filled in with a wrong number - empty cells should never be marked incorrect. Fix the check logic so it skips cells with no value and only compares filled-in cells against the solution. Second: the Hint button doesn't clearly show which cell was just given as a hint - it should fill one specific empty cell with the correct value, lock it from editing, and give it a distinct background color (different from both the pre-filled puzzle cells and the pink error color) so the user can tell 'this one was a hint.' Please fix both in the relevant JS/CSS files.",
+      "note": "Example of catching and rejecting an incorrect/incomplete Copilot suggestion and asking for a targeted fix."
+    },
+    {
+      "milestone": "Timer and Top 10 localStorage scoreboard",
+      "prompt": "When the puzzle is solved (the 'Congratulations! You solved it!' message appears), the app needs to also: 1) show the elapsed time it took to solve, 2) prompt the user for their name, 3) save that name, time, hints used, and difficulty to localStorage, and 4) display a 'Top 10 Fastest Times' table on the page below the board, sorted fastest to slowest, capped at 10 entries, that persists across page reloads by reading from localStorage on page load. Please add a visible timer above/near the board that starts on New Game and stops when solved, and wire up the full save-and-display flow for the Top 10 list in main.js, updating index.html and styles.css as needed."
+    },
+    {
+      "milestone": "3x3 grid alternating colors and dark mode",
+      "prompt": "Style the 3x3 Sudoku boxes so they alternate background colors (like a checkerboard pattern) with no layout shift, using plain CSS. Also add a dark mode toggle button that switches the whole UI - board, buttons, text, and the Top 10 table - between light and dark color schemes, keeping all text and buttons clearly readable in both modes. Make sure the layout stays responsive on both desktop and mobile screen sizes."
+    },
+    {
+      "milestone": "Accessibility (WCAG 2.1 AA)",
+      "prompt": "Review index.html and main.js for accessibility. Add appropriate ARIA labels to the board cells, difficulty selector, and buttons (Check, Hint, New Game, Dark Mode toggle). Make sure every interactive element is reachable and usable via keyboard (Tab and Enter/Space), and check that text/background color contrast in both light and dark mode meets WCAG 2.1 AA contrast ratios."
+    }
+  ]
+}

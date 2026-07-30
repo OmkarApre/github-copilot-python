@@ -3,26 +3,35 @@ import random
 
 SIZE = 9
 EMPTY = 0
+BOX_SIZE = 3
+DIFFICULTY_SETTINGS = {
+    'easy': 36,
+    'medium': 31,
+    'hard': 26,
+}
+
 
 def deep_copy(board):
     return copy.deepcopy(board)
 
+
 def create_empty_board():
     return [[EMPTY for _ in range(SIZE)] for _ in range(SIZE)]
 
+
 def is_safe(board, row, col, num):
-    # Check row and column
     for x in range(SIZE):
         if board[row][x] == num or board[x][col] == num:
             return False
-    # Check 3x3 box
-    start_row = row - row % 3
-    start_col = col - col % 3
-    for i in range(3):
-        for j in range(3):
+
+    start_row = row - row % BOX_SIZE
+    start_col = col - col % BOX_SIZE
+    for i in range(BOX_SIZE):
+        for j in range(BOX_SIZE):
             if board[start_row + i][start_col + j] == num:
                 return False
     return True
+
 
 def fill_board(board):
     for row in range(SIZE):
@@ -39,19 +48,106 @@ def fill_board(board):
                 return False
     return True
 
-def remove_cells(board, clues):
-    attempts = SIZE * SIZE - clues
-    while attempts > 0:
-        row = random.randrange(SIZE)
-        col = random.randrange(SIZE)
-        if board[row][col] != EMPTY:
-            board[row][col] = EMPTY
-            attempts -= 1
 
-def generate_puzzle(clues=35):
+def is_valid_board(board):
+    for row in board:
+        seen = set()
+        for value in row:
+            if value == EMPTY:
+                continue
+            if value < 1 or value > SIZE or value in seen:
+                return False
+            seen.add(value)
+
+    for col in range(SIZE):
+        seen = set()
+        for row in range(SIZE):
+            value = board[row][col]
+            if value == EMPTY:
+                continue
+            if value < 1 or value > SIZE or value in seen:
+                return False
+            seen.add(value)
+
+    for box_row in range(0, SIZE, BOX_SIZE):
+        for box_col in range(0, SIZE, BOX_SIZE):
+            seen = set()
+            for row in range(box_row, box_row + BOX_SIZE):
+                for col in range(box_col, box_col + BOX_SIZE):
+                    value = board[row][col]
+                    if value == EMPTY:
+                        continue
+                    if value < 1 or value > SIZE or value in seen:
+                        return False
+                    seen.add(value)
+
+    return True
+
+
+def is_complete_solution(board):
+    if not is_valid_board(board):
+        return False
+    return all(cell != EMPTY for row in board for cell in row)
+
+
+def count_solutions(board, limit=2):
+    if not is_valid_board(board):
+        return 0
+
+    for row in range(SIZE):
+        for col in range(SIZE):
+            if board[row][col] == EMPTY:
+                solutions = 0
+                candidates = list(range(1, SIZE + 1))
+                random.shuffle(candidates)
+                for candidate in candidates:
+                    if is_safe(board, row, col, candidate):
+                        board[row][col] = candidate
+                        solutions += count_solutions(board, limit)
+                        board[row][col] = EMPTY
+                        if solutions >= limit:
+                            return limit
+                return solutions
+    return 1
+
+
+def is_unique_solution(puzzle, solution=None):
+    board = deep_copy(puzzle)
+    if solution is not None:
+        for row in range(SIZE):
+            for col in range(SIZE):
+                if puzzle[row][col] != EMPTY and puzzle[row][col] != solution[row][col]:
+                    return False
+    return count_solutions(board) == 1
+
+
+def generate_puzzle(clues=35, difficulty='easy'):
+    difficulty_key = (difficulty or 'easy').lower()
+    target_clues = clues
+    if isinstance(clues, int) and clues == 35 and difficulty_key in DIFFICULTY_SETTINGS:
+        target_clues = DIFFICULTY_SETTINGS[difficulty_key]
+
+    target_clues = max(17, min(81, target_clues))
     board = create_empty_board()
     fill_board(board)
     solution = deep_copy(board)
-    remove_cells(board, clues)
+
     puzzle = deep_copy(board)
+    cells = list(range(SIZE * SIZE))
+    random.shuffle(cells)
+    removed = 0
+    attempts = SIZE * SIZE - target_clues
+
+    while cells and removed < attempts:
+        idx = cells.pop()
+        row, col = divmod(idx, SIZE)
+        if puzzle[row][col] == EMPTY:
+            continue
+        original = puzzle[row][col]
+        puzzle[row][col] = EMPTY
+        if count_solutions(deep_copy(puzzle)) != 1:
+            puzzle[row][col] = original
+            continue
+        removed += 1
+
     return puzzle, solution
