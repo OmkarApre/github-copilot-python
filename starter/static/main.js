@@ -163,18 +163,28 @@ function saveScore(name) {
 }
 
 function renderLeaderboard() {
-  const leaderboard = document.getElementById('leaderboard-list');
+  const leaderboardBody = document.getElementById('leaderboard-body');
   const entries = JSON.parse(localStorage.getItem('sudoku-top-ten') || '[]');
-  leaderboard.innerHTML = '';
+  if (!leaderboardBody) {
+    return;
+  }
+
+  leaderboardBody.innerHTML = '';
   if (!entries.length) {
-    leaderboard.innerHTML = '<li>No scores yet.</li>';
+    leaderboardBody.innerHTML = '<tr><td colspan="5">No scores yet.</td></tr>';
     return;
   }
 
   entries.forEach((entry, index) => {
-    const item = document.createElement('li');
-    item.textContent = `${index + 1}. ${entry.name} — ${formatTime(entry.time)} — ${entry.hints} hints — ${entry.difficulty}`;
-    leaderboard.appendChild(item);
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${index + 1}</td>
+      <td>${entry.name}</td>
+      <td>${formatTime(entry.time)}</td>
+      <td>${entry.hints}</td>
+      <td>${entry.difficulty}</td>
+    `;
+    leaderboardBody.appendChild(row);
   });
 }
 

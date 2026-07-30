@@ -21,14 +21,18 @@ def create_empty_board():
 
 def is_safe(board, row, col, num):
     for x in range(SIZE):
-        if board[row][x] == num or board[x][col] == num:
+        if x != col and board[row][x] == num:
+            return False
+        if x != row and board[x][col] == num:
             return False
 
     start_row = row - row % BOX_SIZE
     start_col = col - col % BOX_SIZE
     for i in range(BOX_SIZE):
         for j in range(BOX_SIZE):
-            if board[start_row + i][start_col + j] == num:
+            box_row = start_row + i
+            box_col = start_col + j
+            if (box_row != row or box_col != col) and board[box_row][box_col] == num:
                 return False
     return True
 
@@ -121,13 +125,14 @@ def is_unique_solution(puzzle, solution=None):
     return count_solutions(board) == 1
 
 
-def generate_puzzle(clues=35, difficulty='easy'):
+def generate_puzzle(clues=None, difficulty='easy'):
     difficulty_key = (difficulty or 'easy').lower()
-    target_clues = clues
-    if isinstance(clues, int) and clues == 35 and difficulty_key in DIFFICULTY_SETTINGS:
-        target_clues = DIFFICULTY_SETTINGS[difficulty_key]
+    if clues is None:
+        target_clues = DIFFICULTY_SETTINGS.get(difficulty_key, 35)
+    else:
+        target_clues = clues
 
-    target_clues = max(17, min(81, target_clues))
+    target_clues = max(17, min(81, int(target_clues)))
     board = create_empty_board()
     fill_board(board)
     solution = deep_copy(board)
@@ -136,7 +141,7 @@ def generate_puzzle(clues=35, difficulty='easy'):
     cells = list(range(SIZE * SIZE))
     random.shuffle(cells)
     removed = 0
-    attempts = SIZE * SIZE - target_clues
+    attempts = max(0, SIZE * SIZE - target_clues)
 
     while cells and removed < attempts:
         idx = cells.pop()

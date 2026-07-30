@@ -31,7 +31,18 @@
     <div id="message" class="message" role="status" aria-live="polite"></div>
     <section class="leaderboard">
       <h2>Top 10 Scores</h2>
-      <ol id="leaderboard-list"></ol>
+      <table id="leaderboard-table" class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Time</th>
+            <th>Hints</th>
+            <th>Difficulty</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboard-body"></tbody>
+      </table>
     </section>
   </main>
   <script src="/static/main.js"></script>
