@@ -228,10 +228,17 @@ async function checkSolution() {
 
     if (data.solved) {
       stopTimer();
-      const name = window.prompt('Enter your name for the leaderboard:');
-      if (name) {
-        saveScore(name.trim());
-      }
+      document.getElementById("name-modal").classList.remove("hidden");
+
+      document.getElementById("save-score-btn").onclick = function () {
+        const name =
+        document.getElementById("player-name").value.trim() || "Anonymous";
+        
+        saveScore(name);
+        document.getElementById("name-modal").classList.add("hidden");
+        
+        document.getElementById("player-name").value = "";
+      };
       setMessage(`Congratulations! You solved it in ${formatTime(secondsElapsed)}.`, 'success');
     } else if (incorrect.size > 0) {
       setMessage('Some cells are still incorrect.', 'error');

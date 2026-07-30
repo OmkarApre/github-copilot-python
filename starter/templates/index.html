@@ -41,7 +41,22 @@
             <th>Difficulty</th>
           </tr>
         </thead>
-        <tbody id="leaderboard-body"></tbody>
+        <tbody id="leaderboard-body">
+          <div id="name-modal" class="modal hidden">
+    <div class="modal-content">
+        <h3>Congratulations!</h3>
+        <p>Enter your name</p>
+
+        <input
+            type="text"
+            id="player-name"
+            maxlength="20"
+            placeholder="Your Name">
+
+        <button id="save-score-btn">Save</button>
+    </div>
+</div>
+        </tbody>
       </table>
     </section>
   </main>
