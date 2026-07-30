@@ -1,3 +1,6 @@
+__pycache__/
+*.pyc
+.pytest_cache/
 # Ignore system files
 .DS_Store
 Thumbs.db
