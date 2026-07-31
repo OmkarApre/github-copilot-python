@@ -228,17 +228,11 @@ async function checkSolution() {
 
     if (data.solved) {
       stopTimer();
-      document.getElementById("name-modal").classList.remove("hidden");
-
-      document.getElementById("save-score-btn").onclick = function () {
-        const name =
-        document.getElementById("player-name").value.trim() || "Anonymous";
-        
-        saveScore(name);
-        document.getElementById("name-modal").classList.add("hidden");
-        
-        document.getElementById("player-name").value = "";
-      };
+      const name = window.prompt('Enter your name for the leaderboard:');
+      
+      if (name) {
+        saveScore(name.trim());
+      }
       setMessage(`Congratulations! You solved it in ${formatTime(secondsElapsed)}.`, 'success');
     } else if (incorrect.size > 0) {
       setMessage('Some cells are still incorrect.', 'error');
@@ -292,6 +286,36 @@ function attachBoardEvents() {
       clearHighlights();
     }
   });
+}
+// Replaces window.prompt() with a custom modal, since prompt() is blocked
+// in some environments (e.g. embedded iframes / previews).
+function askPlayerName(summaryText, onSubmit) {
+  const modal = document.getElementById('name-modal');
+  const input = document.getElementById('player-name-input');
+  const summary = document.getElementById('modal-summary');
+  const submitBtn = document.getElementById('modal-submit-btn');
+
+  summary.textContent = summaryText || '';
+  input.value = '';
+  modal.style.display = 'flex';
+  input.focus();
+
+  function handleSubmit() {
+    const name = input.value.trim() || 'Anonymous';
+    modal.style.display = 'none';
+    submitBtn.removeEventListener('click', handleSubmit);
+    input.removeEventListener('keydown', handleEnterKey);
+    onSubmit(name);
+  }
+
+  function handleEnterKey(e) {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    }
+  }
+
+  submitBtn.addEventListener('click', handleSubmit);
+  input.addEventListener('keydown', handleEnterKey);
 }
 
 window.addEventListener('load', () => {
